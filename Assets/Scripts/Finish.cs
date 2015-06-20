@@ -5,10 +5,6 @@ using System.Collections.Generic;
 
 public class Finish : MonoBehaviour {
 
-	int totalPotions = 5;
-	int totalCoins = 100;
-	string weaponID = "Weapon_102";
-
 	Spawner spawner;
 
 	void Start()

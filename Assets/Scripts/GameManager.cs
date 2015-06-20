@@ -2,11 +2,13 @@
 using System.Collections;
 
 using UnityEngine.UI;
-//using UnityEngine.Analytics;
-//using System.Collections.Generic;
+using UnityEngine.Analytics;
+using System.Collections.Generic;
+using UnityStandardAssets.CrossPlatformInput;
 
 public class GameManager : MonoBehaviour {
 
+	public Text startText;
 	public Text scoreText;
 	public Text highScoreText;
 	public float score;
@@ -28,6 +30,13 @@ public class GameManager : MonoBehaviour {
 
 	void StartUp ()
 	{
+		if (!startText)
+			startText = GameObject.Find ("Start Text").GetComponent<Text> ();
+		startText.text = "(Tap To Start)";
+
+		Time.timeScale = 0.0f;
+		Time.fixedDeltaTime = Time.timeScale * 0.02f;
+
 		if(!scoreText)
 			scoreText = GameObject.Find ("Score").GetComponent<Text> ();
 		scoreText.text = "Score: 0";
@@ -43,6 +52,11 @@ public class GameManager : MonoBehaviour {
 
 	void Update()
 	{
+		if (CrossPlatformInputManager.GetButton ("Jump")) {
+			Time.timeScale = 1.0f;
+			Time.fixedDeltaTime = Time.timeScale * 0.02f;
+			startText.text = "";
+		}
 		score += Time.deltaTime;
 		UpdateText ();
 	}
@@ -57,16 +71,16 @@ public class GameManager : MonoBehaviour {
 		if (score > highScore) {
 			highScore = score;
 			PlayerPrefs.SetFloat ("HighScore", highScore);
-//			Analytics.CustomEvent ("NewHighScore", new Dictionary<string, object>{
-//				{ "highScore", highScore }
-//			});
+			Analytics.CustomEvent ("NewHighScore", new Dictionary<string, object>{
+				{ "highScore", highScore }
+			});
 		}
 
-//		Analytics.CustomEvent ("GameOver", new Dictionary<string, object>
-//		                       {
-//			{ "lastColumn", spawner.previousColumn },
-//			{ "score", ((int)score * 100)}
-//		});
+		Analytics.CustomEvent ("GameOver", new Dictionary<string, object>
+		                       {
+			{ "lastColumn", spawner.previousColumn },
+			{ "score", ((int)score * 100)}
+		});
 
 		Application.LoadLevel (Application.loadedLevel);
 	}

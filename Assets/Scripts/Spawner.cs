@@ -13,8 +13,8 @@ public class Spawner : MonoBehaviour {
 	void Start()
 	{
 		Instantiate (columns [0],
-		             new Vector3(transform.position.x, transform.position.y, 0.0f), 
-		             columns[0].transform.rotation);
+	             new Vector3 (transform.position.x, transform.position.y, 0.0f), 
+	             columns [0].transform.rotation);
 		previousColumn = 0;
 //		InvokeRepeating ("Spawn", waitTime, waitTime);
 
@@ -64,13 +64,6 @@ public class Spawner : MonoBehaviour {
 					             columns [0].transform.rotation);
 					Debug.Log ("Same");
 				}
-
-//				if(previousColumn == 3)
-//				{
-//					Instantiate (columns[2], 
-//					             new Vector3(transform.position.x, transform.position.y, 0.0f),
-//					             columns[0].transform.rotation);
-//				}
 				break;
 				
 			default:
@@ -80,18 +73,8 @@ public class Spawner : MonoBehaviour {
 				Debug.Log ("Same");
 				break;
 			}
-//			Instantiate (columns [0],
-//		             new Vector3 (transform.position.x, transform.position.y, 0.0f),
-//		             columns [0].transform.rotation);
 		}
 	}
-
-//	void OnDestroy()
-//	{
-//		Analytics.CustomEvent ("GameOver", new Dictionary<string, object>{
-//			{"Current Column", previousColumn}
-//		});
-//	}
 }
 
 

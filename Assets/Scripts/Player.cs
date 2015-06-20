@@ -22,9 +22,6 @@ public class Player : MonoBehaviour {
 
 	const float k_GroundedRadius = .25f;
 
-
-
-
 	void Start()
 	{
 		groundCheck = transform.Find("GroundCheck");
@@ -52,7 +49,7 @@ public class Player : MonoBehaviour {
 		if (numOfColliders < 0)
 			numOfColliders = 0;
 //		if(!stuck)
-			m_rigidbody.velocity = new Vector2 (speed, m_rigidbody.velocity.y);
+		m_rigidbody.velocity = new Vector2 (speed, m_rigidbody.velocity.y);
 	}
 
 	void OnCollisionEnter2D(Collision2D col)
@@ -75,9 +72,8 @@ public class Player : MonoBehaviour {
 
 	void FixedUpdate()
 	{
-
-		if (groundCheck.GetComponent<Collider2D> ().IsTouchingLayers (whatIsGround)) {
-			grounded = true;
-		}
+			if (groundCheck.GetComponent<Collider2D> ().IsTouchingLayers (whatIsGround)) {
+				grounded = true;
+			}
 	}
 }
