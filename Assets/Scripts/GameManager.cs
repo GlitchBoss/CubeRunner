@@ -2,8 +2,8 @@
 using System.Collections;
 
 using UnityEngine.UI;
-//using UnityEngine.Analytics;
-//using System.Collections.Generic;
+using UnityEngine.Analytics;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour {
 
@@ -57,16 +57,16 @@ public class GameManager : MonoBehaviour {
 		if (score > highScore) {
 			highScore = score;
 			PlayerPrefs.SetFloat ("HighScore", highScore);
-//			Analytics.CustomEvent ("NewHighScore", new Dictionary<string, object>{
-//				{ "highScore", highScore }
-//			});
+			Analytics.CustomEvent ("NewHighScore", new Dictionary<string, object>{
+				{ "highScore", highScore }
+			});
 		}
 
-//		Analytics.CustomEvent ("GameOver", new Dictionary<string, object>
-//		                       {
-//			{ "lastColumn", spawner.previousColumn },
-//			{ "score", ((int)score * 100)}
-//		});
+		Analytics.CustomEvent ("GameOver", new Dictionary<string, object>
+		                       {
+			{ "lastColumn", spawner.previousColumn },
+			{ "score", ((int)score * 100)}
+		});
 
 		Application.LoadLevel (Application.loadedLevel);
 	}
