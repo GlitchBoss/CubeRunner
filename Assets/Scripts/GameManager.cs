@@ -11,11 +11,14 @@ public class GameManager : MonoBehaviour {
 	public Text startText;
 	public Text scoreText;
 	public Text highScoreText;
+	public Text finishScoreText;
+	public GameObject finishPanel;
 	public float score;
 	public float highScore;
 
 	public static GameManager instance;
 
+	bool gameOver = false;
 	Spawner spawner;
 
 	void Awake()
@@ -44,21 +47,28 @@ public class GameManager : MonoBehaviour {
 		if(!highScoreText)
 			highScoreText = GameObject.Find ("High Score").GetComponent<Text> ();
 		highScore = PlayerPrefs.GetFloat ("HighScore");
-
 		highScoreText.text = "High Score: " + ((int)highScore * 100);
+
+		if (!finishPanel)
+			finishPanel = GameObject.Find ("FinishPanel");
+
+		if (!finishScoreText)
+			finishScoreText = GameObject.Find ("FinishScore").GetComponent<Text> ();
 
 		spawner = GameObject.Find ("Spawner").GetComponent<Spawner> ();
 	}
 
 	void Update()
 	{
-		if (CrossPlatformInputManager.GetButton ("Jump")) {
+		if (CrossPlatformInputManager.GetButton ("Jump") && !gameOver) {
 			Time.timeScale = 1.0f;
 			Time.fixedDeltaTime = Time.timeScale * 0.02f;
 			startText.text = "";
 		}
-		score += Time.deltaTime;
-		UpdateText ();
+		if (!gameOver) {
+			score += Time.deltaTime;
+			UpdateText ();
+		}
 	}
 
 	void UpdateText ()
@@ -82,6 +92,16 @@ public class GameManager : MonoBehaviour {
 			{ "score", ((int)score * 100)}
 		});
 
+		gameOver = true;
+		finishPanel.SetActive (true);
+		finishScoreText.text = "Your Score: " + (int)(score * 100) +
+			"\n\nHigh Score: " + (int)(highScore * 100);
+		Time.timeScale = 0.0f;
+		Time.fixedDeltaTime = Time.timeScale * 0.02f;
+	}
+
+	public void Retry ()
+	{
 		Application.LoadLevel (Application.loadedLevel);
 	}
 }
