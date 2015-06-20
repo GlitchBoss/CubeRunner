@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
+//using System.Collections.Generic;
 using UnityStandardAssets.CrossPlatformInput;
-using UnityEngine.Analytics;
+//using UnityEngine.Analytics;
 
 public class Player : MonoBehaviour {
 
@@ -32,7 +32,7 @@ public class Player : MonoBehaviour {
 //		Time.timeScale = 0.5f;
 //		Time.fixedDeltaTime = Time.timeScale * 0.02f;
 
-		Analytics.SetUserBirthYear (2000);
+//		Analytics.SetUserBirthYear (2000);
 	}
 
 	void Update()
