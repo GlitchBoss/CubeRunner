@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEngine.Analytics;
-using System.Collections.Generic;
+//using UnityEngine.Analytics;
+//using System.Collections.Generic;
 
 public class Finish : MonoBehaviour {
 
@@ -15,10 +15,9 @@ public class Finish : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D col)
 	{
 		if (col.tag == "Player") {
-			Analytics.CustomEvent ("gameOver", new Dictionary<string, object>
-			                      {
-				{ "lastColumn", spawner.previousColumn }
-			});
+			//Analytics.CustomEvent ("gameOver", new Dictionary<string, object>{
+			//	{ "lastColumn", spawner.previousColumn }
+			//});
 			Application.LoadLevel (Application.loadedLevel);
 		}
 	}
