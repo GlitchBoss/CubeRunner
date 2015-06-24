@@ -9,7 +9,7 @@ public class Finish : MonoBehaviour {
 
 	void Start()
 	{
-		spawner = GameObject.Find ("Spawner").GetComponent<Spawner> ();
+//		spawner = GameObject.Find ("Spawner").GetComponent<Spawner> ();
 	}
 
 	void OnTriggerEnter2D(Collider2D col)

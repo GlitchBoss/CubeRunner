@@ -10,15 +10,45 @@ public class Spawner : MonoBehaviour {
 
 	public int previousColumn;
 
+	int numOfCols;
+
 	void Start()
 	{
-		Instantiate (columns [0],
-	             new Vector3 (transform.position.x, transform.position.y, 0.0f), 
-	             columns [0].transform.rotation);
+//		Instantiate (columns [0],
+//	             new Vector3 (transform.position.x, transform.position.y, 0.0f), 
+//	             columns [0].transform.rotation);
 		previousColumn = 0;
-//		InvokeRepeating ("Spawn", waitTime, waitTime);
+	}
 
-//		StartCoroutine ("Spawn");
+	void OnTriggerEnter2D(Collider2D col)
+	{
+		if (col.tag == "Floor") {
+			numOfCols++;
+//			if(numOfCols >= 3)
+//			{
+//				if(col.transform.parent != null) {
+//					Destroy(col.transform.parent.gameObject);
+//				}
+//				else {
+//					Destroy(col.gameObject);
+//				}
+//			}
+		}
+	}
+
+	void OnTriggerStay2D(Collider2D col)
+	{
+		if (col.tag == "Floor") {
+			if(numOfCols >= 3)
+			{
+				if(col.transform.parent != null) {
+					Destroy(col.transform.parent.gameObject);
+				}
+				else {
+					Destroy(col.gameObject);
+				}
+			}
+		}
 	}
 
 	void OnTriggerExit2D(Collider2D col)
@@ -73,6 +103,8 @@ public class Spawner : MonoBehaviour {
 				Debug.Log ("Same");
 				break;
 			}
+
+			numOfCols--;
 		}
 	}
 }
