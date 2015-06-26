@@ -7,6 +7,7 @@ public class Spawner : MonoBehaviour {
 
 	public float waitTime;
 	public GameObject[] columns;
+	public float offset = 0.1f;
 
 	public int previousColumn;
 
@@ -48,6 +49,20 @@ public class Spawner : MonoBehaviour {
 					Destroy(col.gameObject);
 				}
 			}
+			if(numOfCols <= 0)
+			{
+				Spawn (previousColumn);
+				Debug.Log ("Saved Spawn! :)");
+			}
+		}
+	}
+
+	void LateUpdate()
+	{
+		if(numOfCols <= 0)
+		{
+			Spawn (previousColumn);
+			Debug.Log ("Saved Spawn! :)");
 		}
 	}
 
@@ -57,9 +72,10 @@ public class Spawner : MonoBehaviour {
 			Debug.Log ("Instantiating...");
 			if(previousColumn == 3)
 			{
-				Instantiate (columns[2], 
-				             new Vector3(transform.position.x, transform.position.y, 0.0f),
-				             columns[0].transform.rotation);
+//				Instantiate (columns[2], 
+//				             new Vector3(transform.position.x - offset, transform.position.y, 0.0f),
+//				             columns[0].transform.rotation);
+				Spawn (2);
 				previousColumn--;
 				return;
 			}
@@ -71,9 +87,10 @@ public class Spawner : MonoBehaviour {
 			case 1:
 				
 				if (previousColumn < columns.Length) {
-					Instantiate (columns [previousColumn + 1],
-					             new Vector3(transform.position.x, transform.position.y, 0.0f),
-					             columns[0].transform.rotation);
+//					Instantiate (columns [previousColumn + 1],
+//					             new Vector3(transform.position.x - offset, transform.position.y, 0.0f),
+//					             columns[0].transform.rotation);
+					Spawn (previousColumn + 1);
 					previousColumn++;
 					Debug.Log ("Up one");
 				}
@@ -81,31 +98,41 @@ public class Spawner : MonoBehaviour {
 				
 			case 2:
 				if (previousColumn > 0) {
-					Instantiate (columns[previousColumn - 1], 
-					             new Vector3(transform.position.x, transform.position.y, 0.0f), 
-					             columns[0].transform.rotation);
+//					Instantiate (columns[previousColumn - 1], 
+//					             new Vector3(transform.position.x - offset, transform.position.y, 0.0f), 
+//					             columns[0].transform.rotation);
+					Spawn (previousColumn - 1);
 					previousColumn--;
 					Debug.Log ("Down one");
 				}
 
 				else{
-					Instantiate (columns [previousColumn],
-					             new Vector3 (transform.position.x, transform.position.y, 0.0f),
-					             columns [0].transform.rotation);
+//					Instantiate (columns [previousColumn],
+//					             new Vector3 (transform.position.x - offset, transform.position.y, 0.0f),
+//					             columns [0].transform.rotation);
+					Spawn (previousColumn);
 					Debug.Log ("Same");
 				}
 				break;
 				
 			default:
-				Instantiate (columns [previousColumn],
-				             new Vector3 (transform.position.x, transform.position.y, 0.0f),
-				             columns [0].transform.rotation);
+//				Instantiate (columns [previousColumn],
+//				             new Vector3 (transform.position.x, transform.position.y, 0.0f),
+//				             columns [0].transform.rotation);
+				Spawn (previousColumn);
 				Debug.Log ("Same");
 				break;
 			}
 
 			numOfCols--;
 		}
+	}
+
+	void Spawn(int index)
+	{
+		Instantiate (columns [index],
+		             new Vector3 (transform.position.x, transform.position.y, 0.0f),
+		             columns [0].transform.rotation);
 	}
 }
 

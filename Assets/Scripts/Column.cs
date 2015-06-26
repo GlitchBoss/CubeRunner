@@ -19,7 +19,7 @@ public class Column : MonoBehaviour {
 	void Start()
 	{
 		normalMat = GetComponent<BoxCollider2D> ().sharedMaterial;
-		playerChild = transform.FindChild ("Player").gameObject;
+		playerChild = transform.FindChild ("ColPlayer").gameObject;
 	}
 
 	void Update() {
@@ -31,6 +31,7 @@ public class Column : MonoBehaviour {
 				GameObject p = Instantiate (player.gameObject, playerChild.transform.position,
 				                            playerChild.transform.rotation) as GameObject;
 
+				p.name = "Player";
 				p.GetComponent<Rigidbody2D>().AddForce (p.transform.right * speed, ForceMode2D.Impulse);
 				p.transform.rotation = Quaternion.identity;
 				playerChild.SetActive (false);

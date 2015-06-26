@@ -8,6 +8,7 @@ using UnityStandardAssets.CrossPlatformInput;
 
 public class GameManager : MonoBehaviour {
 
+	public GameObject startPanel;
 	public Text startText;
 	public Text scoreText;
 	public Text highScoreText;
@@ -36,6 +37,7 @@ public class GameManager : MonoBehaviour {
 		if (!startText)
 			startText = GameObject.Find ("Start Text").GetComponent<Text> ();
 		startText.text = "(Tap To Start)";
+		startPanel.SetActive (true);
 
 		Time.timeScale = 0.0f;
 		Time.fixedDeltaTime = Time.timeScale * 0.02f;
@@ -47,7 +49,7 @@ public class GameManager : MonoBehaviour {
 		if(!highScoreText)
 			highScoreText = GameObject.Find ("High Score").GetComponent<Text> ();
 		highScore = PlayerPrefs.GetFloat ("HighScore");
-		highScoreText.text = "High Score: " + ((int)highScore * 100);
+		highScoreText.text = "High Score: " + (int)(highScore * 100);
 
 		if (!finishPanel)
 			finishPanel = GameObject.Find ("FinishPanel");
@@ -63,7 +65,7 @@ public class GameManager : MonoBehaviour {
 		if (CrossPlatformInputManager.GetButton ("Jump") && !gameOver) {
 			Time.timeScale = 1.0f;
 			Time.fixedDeltaTime = Time.timeScale * 0.02f;
-			startText.text = "";
+			startPanel.SetActive (false);
 		}
 		if (!gameOver) {
 			score += Time.deltaTime;
