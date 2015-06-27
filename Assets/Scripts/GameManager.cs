@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager instance;
 
-	bool gameOver = false;
+	public bool gameOver = false;
 	Spawner spawner;
 
 	void Awake()
@@ -34,30 +34,30 @@ public class GameManager : MonoBehaviour {
 
 	void StartUp ()
 	{
-		if (!startText)
-			startText = GameObject.Find ("Start Text").GetComponent<Text> ();
+		startPanel = GameObject.Find ("StartPanel");
+
+		startText = GameObject.Find ("Start Text").GetComponent<Text> ();
 		startText.text = "(Tap To Start)";
 		startPanel.SetActive (true);
 
 		Time.timeScale = 0.0f;
 		Time.fixedDeltaTime = Time.timeScale * 0.02f;
 
-		if(!scoreText)
-			scoreText = GameObject.Find ("Score").GetComponent<Text> ();
+		scoreText = GameObject.Find ("Score").GetComponent<Text> ();
 		scoreText.text = "Score: 0";
 
-		if(!highScoreText)
-			highScoreText = GameObject.Find ("High Score").GetComponent<Text> ();
+		highScoreText = GameObject.Find ("High Score").GetComponent<Text> ();
 		highScore = PlayerPrefs.GetFloat ("HighScore");
 		highScoreText.text = "High Score: " + (int)(highScore * 100);
 
-		if (!finishPanel)
-			finishPanel = GameObject.Find ("FinishPanel");
+		finishPanel = GameObject.Find ("FinishPanel");
+		finishPanel.SetActive (false);
 
-		if (!finishScoreText)
-			finishScoreText = GameObject.Find ("FinishScore").GetComponent<Text> ();
+		finishScoreText = finishPanel.transform.FindChild ("FinishScore").GetComponent<Text> ();
 
 		spawner = GameObject.Find ("Spawner").GetComponent<Spawner> ();
+
+		gameOver = false;
 	}
 
 	void Update()
@@ -71,6 +71,9 @@ public class GameManager : MonoBehaviour {
 			score += Time.deltaTime;
 			UpdateText ();
 		}
+		GameObject[] p = GameObject.FindGameObjectsWithTag ("Player");
+		if (p.Length >= 2)
+			Destroy (p [1]);
 	}
 
 	void UpdateText ()

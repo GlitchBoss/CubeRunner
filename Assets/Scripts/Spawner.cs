@@ -11,36 +11,23 @@ public class Spawner : MonoBehaviour {
 
 	public int previousColumn;
 
-	int numOfCols;
+	public int numOfCols;
 
 	void Start()
 	{
-//		Instantiate (columns [0],
-//	             new Vector3 (transform.position.x, transform.position.y, 0.0f), 
-//	             columns [0].transform.rotation);
 		previousColumn = 0;
 	}
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
 		if (col.tag == "Floor") {
-			numOfCols++;
-//			if(numOfCols >= 3)
-//			{
-//				if(col.transform.parent != null) {
-//					Destroy(col.transform.parent.gameObject);
-//				}
-//				else {
-//					Destroy(col.gameObject);
-//				}
-//			}
 		}
 	}
 
 	void OnTriggerStay2D(Collider2D col)
 	{
 		if (col.tag == "Floor") {
-			if(numOfCols >= 3)
+			if(numOfCols >= 2)
 			{
 				if(col.transform.parent != null) {
 					Destroy(col.transform.parent.gameObject);
@@ -48,18 +35,14 @@ public class Spawner : MonoBehaviour {
 				else {
 					Destroy(col.gameObject);
 				}
-			}
-			if(numOfCols <= 0)
-			{
-				Spawn (previousColumn);
-				Debug.Log ("Saved Spawn! :)");
+				numOfCols--;
 			}
 		}
 	}
 
-	void LateUpdate()
+	void FixedUpdate()
 	{
-		if(numOfCols <= 0)
+		if(numOfCols < 0)
 		{
 			Spawn (previousColumn);
 			Debug.Log ("Saved Spawn! :)");
@@ -70,69 +53,78 @@ public class Spawner : MonoBehaviour {
 	{
 		if (col.tag == "Floor") {
 			Debug.Log ("Instantiating...");
+			numOfCols--;
 			if(previousColumn == 3)
 			{
-//				Instantiate (columns[2], 
-//				             new Vector3(transform.position.x - offset, transform.position.y, 0.0f),
-//				             columns[0].transform.rotation);
 				Spawn (2);
 				previousColumn--;
 				return;
 			}
 
-			int index = Random.Range (0, 3);
-			
-			switch (index) {
+			int index = Choose (new float[3]{45, 45, 10}); 
+			switch(index) {
 				
-			case 1:
+			case 0:
 				
 				if (previousColumn < columns.Length) {
-//					Instantiate (columns [previousColumn + 1],
-//					             new Vector3(transform.position.x - offset, transform.position.y, 0.0f),
-//					             columns[0].transform.rotation);
 					Spawn (previousColumn + 1);
 					previousColumn++;
 					Debug.Log ("Up one");
+				}else{
+					Spawn(previousColumn);
+					Debug.Log ("Same");
 				}
 				break;
 				
-			case 2:
+			case 1:
 				if (previousColumn > 0) {
-//					Instantiate (columns[previousColumn - 1], 
-//					             new Vector3(transform.position.x - offset, transform.position.y, 0.0f), 
-//					             columns[0].transform.rotation);
 					Spawn (previousColumn - 1);
 					previousColumn--;
 					Debug.Log ("Down one");
 				}
 
 				else{
-//					Instantiate (columns [previousColumn],
-//					             new Vector3 (transform.position.x - offset, transform.position.y, 0.0f),
-//					             columns [0].transform.rotation);
 					Spawn (previousColumn);
 					Debug.Log ("Same");
 				}
 				break;
 				
 			default:
-//				Instantiate (columns [previousColumn],
-//				             new Vector3 (transform.position.x, transform.position.y, 0.0f),
-//				             columns [0].transform.rotation);
 				Spawn (previousColumn);
 				Debug.Log ("Same");
 				break;
 			}
 
-			numOfCols--;
 		}
 	}
 
 	void Spawn(int index)
 	{
 		Instantiate (columns [index],
-		             new Vector3 (transform.position.x, transform.position.y, 0.0f),
+		             new Vector3 (transform.position.x - offset, transform.position.y, 0.0f),
 		             columns [0].transform.rotation);
+		numOfCols++;
+	}
+
+	int Choose (float[] probs) {
+		
+		float total = 0;
+		
+		foreach (float elem in probs) {
+			total += elem;
+		}
+		
+		float randomPoint = Random.value * total;
+		
+		for (int i= 0; i < probs.Length; i++) {
+			if (randomPoint < probs[i]) {
+				return i;
+			}
+			else {
+				randomPoint -= probs[i];
+			}
+		}
+		return probs.Length - 1;
 	}
 }
 
