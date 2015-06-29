@@ -42,8 +42,8 @@ public class Player : MonoBehaviour {
 	{
 		if (col.gameObject.tag != "Column")
 			numOfColliders++;
-//		if (col.gameObject.tag == "Floor")
-//			GameManager.instance.GameOver ();
+		if (col.gameObject.tag == "Floor")
+			grounded = true;
 	}
 
 	void OnCollisionExit2D(Collision2D col)
@@ -56,8 +56,8 @@ public class Player : MonoBehaviour {
 
 	void FixedUpdate()
 	{
-			if (groundCheck.GetComponent<BoxCollider2D> ().IsTouchingLayers (whatIsGround)) {
-				grounded = true;
-			}
+		if(groundCheck.GetComponent<BoxCollider2D>().IsTouchingLayers (whatIsGround)){
+			grounded = true;
+		}
 	}
 }

@@ -11,7 +11,7 @@ public class Column : MonoBehaviour {
 	public PhysicsMaterial2D stickyMat;
 	public GameObject playerChild;
 	public Transform player;
-	public float speed;
+	public float force;
 
 	bool hit;
 	bool playerOn;
@@ -32,7 +32,7 @@ public class Column : MonoBehaviour {
 				                            playerChild.transform.rotation) as GameObject;
 
 				p.name = "Player";
-				p.GetComponent<Rigidbody2D>().AddForce (p.transform.right * speed, ForceMode2D.Impulse);
+				p.GetComponent<Rigidbody2D>().AddForce (p.transform.right * force, ForceMode2D.Impulse);
 				p.transform.rotation = Quaternion.identity;
 				playerChild.SetActive (false);
 				playerOn = false;
