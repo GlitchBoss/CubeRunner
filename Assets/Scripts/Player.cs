@@ -7,15 +7,11 @@ public class Player : MonoBehaviour {
 	public float jumpForce;
 	public float speed;
 	public LayerMask whatIsGround;
-	public bool stuck;
-	public Transform objStuckTo;
 	public int numOfColliders;
+	public AudioSource jump;
 
 	Transform groundCheck;
-	public Vector3 stuckOffset;
-
-	public bool grounded;
-
+	bool grounded;
 	Rigidbody2D m_rigidbody;
 
 	const float k_GroundedRadius = .25f;
@@ -24,6 +20,7 @@ public class Player : MonoBehaviour {
 	{
 		groundCheck = transform.Find("GroundCheck");
 		m_rigidbody = GetComponent<Rigidbody2D> ();
+		jump = GetComponent<AudioSource> ();
 	}
 
 	void Update()
@@ -31,6 +28,7 @@ public class Player : MonoBehaviour {
 		if (CrossPlatformInputManager.GetButtonDown ("Jump") && grounded) {
 			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0.0f, jumpForce), ForceMode2D.Impulse);
 			grounded = false;
+			GameManager.instance.PlaySFX (jump);
 		}
 
 		if (numOfColliders < 0)

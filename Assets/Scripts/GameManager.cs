@@ -8,19 +8,28 @@ using UnityStandardAssets.CrossPlatformInput;
 
 public class GameManager : MonoBehaviour {
 
-	public GameObject startPanel;
-	public Text startText;
-	public Text scoreText;
-	public Text highScoreText;
-	public Text finishScoreText;
-	public GameObject finishPanel;
+	GameObject startPanel;
+	Text startText;
+	Text scoreText;
+	Text highScoreText;
+	Text finishScoreText;
+	GameObject finishPanel;
 	public float score;
 	public float highScore;
+	public AudioSource buttonSFX;
+	AudioSource music;
+	Toggle musicToggle;
+	Toggle sfxToggle;
+	GameObject optionsPanel;
 
 	public static GameManager instance;
 
 	public bool gameOver = false;
 	Spawner spawner;
+	bool gameStarted;
+	bool firstTime = true;
+	public bool musicOn;
+	public bool sfxOn;
 
 	void Awake()
 	{
@@ -29,45 +38,109 @@ public class GameManager : MonoBehaviour {
 		if (instance != this)
 			Destroy (this.gameObject);
 
+		firstTime = true;
 		StartUp ();
+	}
+
+	void OnLevelWasLoaded()
+	{
+		if (!firstTime)
+			StartUp ();
 	}
 
 	void StartUp ()
 	{
-		startPanel = GameObject.Find ("StartPanel");
+		switch(Application.loadedLevel)
+		{
+		case 0:
+			music = GameObject.Find ("Music").GetComponent<AudioSource> ();
+			musicToggle = GameObject.Find ("MusicToggle").GetComponent<Toggle>();
+			sfxToggle = GameObject.Find ("SFXToggle").GetComponent<Toggle>();
+			optionsPanel = GameObject.Find ("Options");
+			int on = PlayerPrefs.GetInt ("MusicToggle");
+			if(on == 0)
+			{
+				musicToggle.isOn = true;
+				music.Play ();
+			}
+			else if(on == 1)
+			{
+				musicToggle.isOn = false;
+				music.Stop ();
+			}
+			else
+			{
+				musicToggle.isOn = true;
+				music.Play();
+			}
+			musicOn = musicToggle.isOn;
+			on = PlayerPrefs.GetInt ("SFXToggle");
+			if(on == 0)
+			{
+				sfxToggle.isOn = true;
+			}
+			else if(on == 1)
+			{
+				sfxToggle.isOn = false;
+			}
+			else
+			{
+				sfxToggle.isOn = true;
+			}
+			sfxOn = sfxToggle.isOn;
+			optionsPanel.SetActive (false);
+			break;
+		case 1:
+			music = GameObject.Find ("Music").GetComponent<AudioSource> ();
 
-		startText = GameObject.Find ("Start Text").GetComponent<Text> ();
-		startText.text = "(Tap To Start)";
-		startPanel.SetActive (true);
+			startPanel = GameObject.Find ("StartPanel");
 
-		Time.timeScale = 0.0f;
-		Time.fixedDeltaTime = Time.timeScale * 0.02f;
+			startText = GameObject.Find ("Start Text").GetComponent<Text> ();
+			startText.text = "(Tap To Start)";
+			startPanel.SetActive (true);
 
-		scoreText = GameObject.Find ("Score").GetComponent<Text> ();
-		scoreText.text = "Score: 0";
+			Time.timeScale = 0.0f;
+			Time.fixedDeltaTime = Time.timeScale * 0.02f;
 
-		highScoreText = GameObject.Find ("High Score").GetComponent<Text> ();
-		highScore = PlayerPrefs.GetFloat ("HighScore");
-		highScoreText.text = "High Score: " + (int)(highScore * 100);
+			scoreText = GameObject.Find ("Score").GetComponent<Text> ();
+			scoreText.text = "Score: 0";
 
-		finishPanel = GameObject.Find ("FinishPanel");
-		finishPanel.SetActive (false);
+			highScoreText = GameObject.Find ("High Score").GetComponent<Text> ();
+			highScore = PlayerPrefs.GetFloat ("HighScore");
+			highScoreText.text = "High Score: " + (int)(highScore * 100);
 
-		finishScoreText = finishPanel.transform.FindChild ("FinishScore").GetComponent<Text> ();
+			finishPanel = GameObject.Find ("FinishPanel");
+			finishPanel.SetActive (false);
 
-		spawner = GameObject.Find ("Spawner").GetComponent<Spawner> ();
+			finishScoreText = finishPanel.transform.FindChild ("FinishScore").GetComponent<Text> ();
 
-		gameOver = false;
+			spawner = GameObject.Find ("Spawner").GetComponent<Spawner> ();
+
+			gameOver = false;
+			gameStarted = false;
+			music.playOnAwake = false;
+			if(musicOn)
+				music.Play ();
+			break;
+		}
+		if(firstTime)
+			firstTime = false;
 	}
 
 	void Update()
 	{
-		if (CrossPlatformInputManager.GetButton ("Jump") && !gameOver) {
+		if (Application.loadedLevel == 0)
+			return;
+		if (CrossPlatformInputManager.GetButton ("Jump") && !gameStarted) {
 			Time.timeScale = 1.0f;
 			Time.fixedDeltaTime = Time.timeScale * 0.02f;
 			startPanel.SetActive (false);
+			music.Play ();
+			GameObject.FindGameObjectWithTag ("Player").
+				GetComponent<AudioSource>().Play ();
+			gameStarted = true;
 		}
-		if (!gameOver) {
+		if (!gameOver && gameStarted) {
 			score += Time.deltaTime;
 			UpdateText ();
 		}
@@ -108,5 +181,45 @@ public class GameManager : MonoBehaviour {
 	public void Retry ()
 	{
 		Application.LoadLevel (Application.loadedLevel);
+	}
+
+	public void ToggleAudio(string whatToToggle)
+	{
+		switch (whatToToggle) {
+		case "Music":
+			musicOn = !musicOn;
+			musicToggle.isOn = musicOn;
+			if(musicOn)
+			{
+				PlayerPrefs.SetInt ("MusicToggle", 0);
+				music.Play ();
+			}
+			else
+			{
+				PlayerPrefs.SetInt ("MusicToggle", 1);
+				music.Stop ();
+			}
+			break;
+		case "SFX":
+			sfxOn = !sfxOn;
+			sfxToggle.isOn = sfxOn;
+			if(sfxToggle)
+				PlayerPrefs.SetInt ("SFXToggle", 0);
+			else
+				PlayerPrefs.SetInt ("SFXToggle", 1);
+			break;
+		}
+	}
+
+	public void PlaySFX(AudioSource source)
+	{
+		if (sfxOn)
+			source.Play ();
+	}
+
+	public void PlayButtonSFX()
+	{
+		if (sfxOn)
+			buttonSFX.Play ();
 	}
 }
