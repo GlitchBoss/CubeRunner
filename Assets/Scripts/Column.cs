@@ -36,7 +36,7 @@ public class Column : MonoBehaviour {
 				p.transform.rotation = Quaternion.identity;
 				playerChild.SetActive (false);
 				playerOn = false;
-				GameManager.instance.PlaySFX (p.GetComponent<AudioSource>());
+				AudioManager.instance.PlaySFX (p.GetComponent<AudioSource>());
 				return;
 			}
 		}

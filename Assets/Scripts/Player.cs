@@ -28,7 +28,7 @@ public class Player : MonoBehaviour {
 		if (CrossPlatformInputManager.GetButtonDown ("Jump") && grounded) {
 			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0.0f, jumpForce), ForceMode2D.Impulse);
 			grounded = false;
-			GameManager.instance.PlaySFX (jump);
+			AudioManager.instance.PlaySFX (jump);
 		}
 
 		if (numOfColliders < 0)

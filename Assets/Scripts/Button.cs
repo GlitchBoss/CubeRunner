@@ -5,11 +5,11 @@ public class Button : MonoBehaviour {
 
 	public void PlaySFX()
 	{
-		GameManager.instance.PlayButtonSFX ();
+		AudioManager.instance.PlayButtonSFX ();
 	}
 
 	public void ToggleAudio(string whatToToggle)
 	{
-		GameManager.instance.ToggleAudio (whatToToggle);
+		AudioManager.instance.ToggleAudio (whatToToggle);
 	}
 }
