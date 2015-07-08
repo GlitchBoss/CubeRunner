@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour {
 	public float score;
 	public float highScore;
 	public bool gameOver = false;
-	public AudioManager AM;
+	public SoundManager SM;
 
 	GameObject startPanel;
 	Text startText;
@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour {
 	void StartUp ()
 	{
 		Debug.Log ("StartUp");
-		AM = GetComponent<AudioManager> ();
+		SM = GetComponent<SoundManager> ();
 //		music = GameObject.Find ("Music").GetComponent<AudioSource> ();
 //		AM.GetAudioPrefs ();
 		if (Application.loadedLevel == 0)
@@ -58,7 +58,6 @@ public class GameManager : MonoBehaviour {
 		Time.fixedDeltaTime = 0.0f;
 		gameOver = false;
 		gameStarted = false;
-		break;
 	}
 
 	void GetAndSetupReferences()
@@ -91,8 +90,8 @@ public class GameManager : MonoBehaviour {
 			Time.timeScale = 1.0f;
 			Time.fixedDeltaTime = 0.02f;
 			startPanel.SetActive (false);
-			if(AM.musicOn)
-				AM.music.Play ();
+			if(SM.musicOn)
+				SM.music.Play ();
 			GameObject.FindGameObjectWithTag ("Player").
 				GetComponent<AudioSource>().Play ();
 			gameStarted = true;

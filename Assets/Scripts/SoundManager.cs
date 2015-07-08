@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class AudioManager : MonoBehaviour {
+public class SoundManager : MonoBehaviour {
 
 	public AudioSource buttonSFX;
 	public AudioSource music;
@@ -13,7 +13,7 @@ public class AudioManager : MonoBehaviour {
 
 	GameObject optionsPanel;
 
-	public static AudioManager instance;
+	public static SoundManager instance;
 
 	void Awake()
 	{
