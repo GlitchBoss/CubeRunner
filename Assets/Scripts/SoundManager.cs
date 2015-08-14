@@ -19,13 +19,13 @@ public class SoundManager : MonoBehaviour {
 	{
 		if (instance == null) {
 			instance = this;
-			Setup ();
+//			Setup ();
 		}
 		if (instance != this)
 			Destroy (this.gameObject);
 	}
 
-	void Setup ()
+	public void SetUp ()
 	{
 		music = GameObject.Find ("Music").GetComponent<AudioSource> ();
 		buttonSFX = GetComponent<AudioSource> ();
@@ -33,12 +33,12 @@ public class SoundManager : MonoBehaviour {
 			musicToggle = GameObject.Find ("MusicToggle").GetComponent<Toggle> ();
 			sfxToggle = GameObject.Find ("SFXToggle").GetComponent<Toggle> ();
 			optionsPanel = GameObject.Find ("Options");
+			optionsPanel.SetActive (false);
 		}
 		GetAudioPrefs ();
-		optionsPanel.SetActive (false);
 	}
 
-	public void GetAudioPrefs()
+	void GetAudioPrefs()
 	{
 		int on = PlayerPrefs.GetInt ("MusicToggle");
 		if(on == 0)
@@ -51,7 +51,8 @@ public class SoundManager : MonoBehaviour {
 			musicOn = false;
 			music.Stop ();
 		}
-		musicToggle.isOn = musicOn;
+		if(Application.loadedLevel == 0)
+			musicToggle.isOn = musicOn;
 
 		on = PlayerPrefs.GetInt ("SFXToggle");
 		if(on == 0)
@@ -62,7 +63,8 @@ public class SoundManager : MonoBehaviour {
 		{
 			sfxOn = false;
 		}
-		sfxToggle.isOn = sfxOn;
+		if(Application.loadedLevel == 0)
+			sfxToggle.isOn = sfxOn;
 	}
 
 	public void ToggleAudio(string whatToToggle)

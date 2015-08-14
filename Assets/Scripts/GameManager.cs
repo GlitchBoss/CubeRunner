@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour {
 	Text highScoreText;
 	Text finishScoreText;
 	GameObject finishPanel;
-	Transform player;
+	public Transform player;
 	float distance;
 	Transform startPoint;
 	Spawner spawner;
@@ -48,8 +48,7 @@ public class GameManager : MonoBehaviour {
 	{
 		Debug.Log ("StartUp");
 		SM = GetComponent<SoundManager> ();
-//		music = GameObject.Find ("Music").GetComponent<AudioSource> ();
-//		AM.GetAudioPrefs ();
+		SM.SetUp ();
 		if (Application.loadedLevel == 0)
 			return;
 
@@ -86,7 +85,7 @@ public class GameManager : MonoBehaviour {
 	{
 		if (Application.loadedLevel == 0)
 			return;
-		if (CrossPlatformInputManager.GetButton ("Jump") && !gameStarted) {
+		if ((Input.touches.Length > 0 || Input.GetButtonDown ("Jump")) && !gameStarted) {
 			Time.timeScale = 1.0f;
 			Time.fixedDeltaTime = 0.02f;
 			startPanel.SetActive (false);
@@ -96,28 +95,31 @@ public class GameManager : MonoBehaviour {
 				GetComponent<AudioSource>().Play ();
 			gameStarted = true;
 		}
-		if (!gameOver && gameStarted) {
-			UpdateScore();
-		}
 		GameObject[] p = GameObject.FindGameObjectsWithTag ("Player");
 		if (p.Length >= 2) {
 			Destroy (p [1]);
 			if(!player)
 				player = GameObject.FindGameObjectWithTag ("Player").transform;
 		}
+		if (!gameOver && gameStarted) {
+			UpdateScore();
+		}
 	}
 
 	void UpdateScore ()
 	{
-		if(player)
+		Debug.Log ("Updating Score");
+		if (player) {
 			distance = Vector3.Distance (player.position, startPoint.position);
+			Debug.Log ("Distance recalculated");
+		}
 		UpdateText ();
 	}
 
 	void UpdateText ()
 	{
 //		scoreText.text = "Score: " + (int)(score * 100);
-		scoreText.text = "Score: " + (int)distance;
+		scoreText.text = "Score: " + (int)(distance * 100);
 	}
 
 	public void GameOver()
