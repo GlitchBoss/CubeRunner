@@ -26,7 +26,7 @@ public class Column : MonoBehaviour {
 		if (hit) {
 			Quaternion q = Quaternion.AngleAxis(targetAngle, Vector3.forward);
 			transform.rotation = Quaternion.Slerp(transform.rotation, q, Time.deltaTime * tiltSpeed);
-			if(CrossPlatformInputManager.GetButtonDown ("Jump") && playerOn)
+			if((Input.touches.Length > 0 || Input.GetButton ("Jump")) && playerOn)
 			{
 				GameObject p = Instantiate (player.gameObject, playerChild.transform.position,
 				                            playerChild.transform.rotation) as GameObject;
