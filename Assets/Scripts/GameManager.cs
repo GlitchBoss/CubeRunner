@@ -57,6 +57,7 @@ public class GameManager : MonoBehaviour {
 		Time.fixedDeltaTime = 0.0f;
 		gameOver = false;
 		gameStarted = false;
+		score = 0;
 	}
 
 	void GetAndSetupReferences()
@@ -98,10 +99,13 @@ public class GameManager : MonoBehaviour {
 		GameObject[] p = GameObject.FindGameObjectsWithTag ("Player");
 		if (p.Length >= 2) {
 			Destroy (p [1]);
+
+		}
+		if (p.Length >= 1) {
 			if(!player)
 				player = GameObject.FindGameObjectWithTag ("Player").transform;
 		}
-		if (!gameOver && gameStarted) {
+		if (!gameOver && gameStarted && player != null) {
 			UpdateScore();
 		}
 	}
@@ -109,17 +113,18 @@ public class GameManager : MonoBehaviour {
 	void UpdateScore ()
 	{
 		Debug.Log ("Updating Score");
-		if (player) {
-			distance = Vector3.Distance (player.position, startPoint.position);
-			Debug.Log ("Distance recalculated");
-		}
+//		if (player) {
+//			distance = Vector3.Distance (player.position, startPoint.position);
+//			Debug.Log ("Distance recalculated");
+//		}
+		score += Time.deltaTime;
 		UpdateText ();
 	}
 
 	void UpdateText ()
 	{
-//		scoreText.text = "Score: " + (int)(score * 100);
-		scoreText.text = "Score: " + (int)(distance * 100);
+		scoreText.text = "Score: " + (int)(score * 100);
+//		scoreText.text = "Score: " + (int)(distance * 100);
 	}
 
 	public void GameOver()
