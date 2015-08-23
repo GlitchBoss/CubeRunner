@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour {
 	public float highScore;
 	public bool gameOver = false;
 	public SoundManager SM;
+	public TimeManager TM;
 
 	GameObject startPanel;
 	Text startText;
@@ -49,6 +50,7 @@ public class GameManager : MonoBehaviour {
 		Debug.Log ("StartUp");
 		SM = GetComponent<SoundManager> ();
 		SM.SetUp ();
+		TM = GetComponent<TimeManager> ();
 		if (Application.loadedLevel == 0)
 			return;
 

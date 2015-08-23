@@ -12,4 +12,27 @@ public class Button : MonoBehaviour {
 	{
 		SoundManager.instance.ToggleAudio (whatToToggle);
 	}
+
+	public void LoadLastLevel()
+	{
+		int level = PlayerPrefs.GetInt ("LastLevel");
+		if(level == null || level == 0)
+			level = 1;
+		Application.LoadLevel (level + 1);
+	}
+
+	public void Pause()
+	{
+		GameManager.instance.TM.Pause ();
+	}
+
+	public void Resume()
+	{
+		GameManager.instance.TM.Resume ();
+	}
+
+	public void Retry()
+	{
+		GameManager.instance.Retry ();
+	}
 }
