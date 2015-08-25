@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class Button : MonoBehaviour {
+public class ButtonClass : MonoBehaviour {
 
 	public void PlaySFX()
 	{
@@ -30,9 +30,9 @@ public class Button : MonoBehaviour {
 	public void LoadLastLevel()
 	{
 		int level = PlayerPrefs.GetInt ("LastLevel");
-		if(level == null || level == 0)
+		if(level == 0)
 			level = 1;
-		Application.LoadLevel (level + 1);
+		Application.LoadLevel (level + 2);
 	}
 
 	public void LoadNextLevel()

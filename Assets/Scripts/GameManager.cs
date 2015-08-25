@@ -24,11 +24,11 @@ public class GameManager : MonoBehaviour {
 	Text finishScoreText;
 	GameObject finishPanel;
 	public Transform player;
-	float distance;
+//	float distance;
 	Transform startPoint;
 	Spawner spawner;
 	bool gameStarted;
-	Level currentLevel;
+	public Level currentLevel;
 
 	public static GameManager instance;
 
@@ -64,10 +64,16 @@ public class GameManager : MonoBehaviour {
 		gameOver = false;
 		gameStarted = false;
 		score = 0;
+		time = 0;
 	}
 
 	void GetAndSetupReferences()
 	{
+		if (Application.loadedLevel == 1) {
+			
+			return;
+		}
+
 		Debug.Log ("Loading...");
 		startPanel = GameObject.Find ("StartPanel");
 		startText = GameObject.Find ("Start Text").GetComponent<Text> ();
@@ -78,7 +84,7 @@ public class GameManager : MonoBehaviour {
 		finishScoreText = finishPanel.transform.FindChild ("FinishScore").GetComponent<Text> ();
 		player = GameObject.FindGameObjectWithTag ("Player").transform;
 
-		if (Application.loadedLevel == 1) {
+		if (Application.loadedLevel == 2) {
 			scoreText = GameObject.Find ("Score").GetComponent<Text> ();
 			scoreText.text = "Score: 0";
 			highScoreText = GameObject.Find ("High Score").GetComponent<Text> ();
@@ -86,10 +92,19 @@ public class GameManager : MonoBehaviour {
 			highScoreText.text = "High Score: " + (int)(highScore * 100);
 			spawner = GameObject.Find ("Spawner").GetComponent<Spawner> ();
 			startPoint = GameObject.FindGameObjectWithTag ("StartPoint").transform;
-			distance = Vector3.Distance (player.position, startPoint.position);
+//			distance = Vector3.Distance (player.position, startPoint.position);
 		} else if (Application.loadedLevel >= 2) {
 			currentLevel = GameObject.Find ("Level").GetComponent<Level>();
-
+			PlayerPrefs.SetInt ("LastLevel", currentLevel.level);
+			if(!currentLevel.isUnlocked)
+			{
+				currentLevel.isUnlocked = true;
+				PlayerPrefs.SetInt ("Unlocked" + currentLevel.level.ToString (), 1); 
+			}
+			else
+			{
+				PlayerPrefs.SetInt ("Unlocked" + currentLevel.level.ToString (), 0);
+			}
 		}
 
 		Debug.Log ("Loaded");
@@ -127,13 +142,13 @@ public class GameManager : MonoBehaviour {
 	void UpdateScore ()
 	{
 		Debug.Log ("Updating Score");
-		if (Application.loadedLevel == 1) {
+		if (Application.loadedLevel == 2) {
 //			if (player) {
 //				distance = Vector3.Distance (player.position, startPoint.position);
 //				Debug.Log ("Distance recalculated");
 //			}
 			score += Time.deltaTime;
-		} else if (Application.loadedLevel >= 2) {
+		} else if (Application.loadedLevel >= 3) {
 			time += Time.deltaTime;
 		}
 		UpdateText ();
@@ -141,7 +156,7 @@ public class GameManager : MonoBehaviour {
 
 	void UpdateText ()
 	{
-		if (Application.loadedLevel == 1) {
+		if (Application.loadedLevel == 2) {
 			scoreText.text = "Score: " + (int)(score * 100);
 //			scoreText.text = "Score: " + (int)(distance * 100);
 		}
@@ -149,7 +164,7 @@ public class GameManager : MonoBehaviour {
 
 	public void GameOver()
 	{
-		if (Application.loadedLevel == 1) {
+		if (Application.loadedLevel == 2) {
 			if (score > highScore) {
 				highScore = score;
 				PlayerPrefs.SetFloat ("EndlessHighScore", highScore);
@@ -163,9 +178,9 @@ public class GameManager : MonoBehaviour {
 				{ "score", ((int)score * 100)}
 			});
 		}
-		else if (Application.loadedLevel >= 2) {
+		else if (Application.loadedLevel >= 3) {
 			bestTime = PlayerPrefs.GetFloat ("HighScore" + currentLevel.level.ToString ());
-			if(time > bestTime)
+			if(time < bestTime)
 			{
 				bestTime = time;
 				PlayerPrefs.SetFloat ("HighScore" + currentLevel.level.ToString (), bestTime);
@@ -174,10 +189,10 @@ public class GameManager : MonoBehaviour {
 
 		gameOver = true;
 		finishPanel.SetActive (true);
-		if (Application.loadedLevel == 1) {
+		if (Application.loadedLevel == 2) {
 			finishScoreText.text = "Your Score: " + (int)(score * 100) +
 				"\n\nHigh Score: " + (int)(highScore * 100);
-		} else if (Application.loadedLevel >= 2) {
+		} else if (Application.loadedLevel >= 3) {
 			finishScoreText.text = String.Format ("Your Time: {0}\n\nBest Time: {1}",
 			                                      Math.Round (time, 2),
 			                                      Math.Round (bestTime, 2));
