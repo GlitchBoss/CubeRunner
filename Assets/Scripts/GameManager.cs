@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.Analytics;
 using System.Collections.Generic;
 using UnityStandardAssets.CrossPlatformInput;
+using System;
 
 public class GameManager : MonoBehaviour {
 
@@ -13,6 +14,8 @@ public class GameManager : MonoBehaviour {
 	public bool gameOver = false;
 	public SoundManager SM;
 	public TimeManager TM;
+	public float time;
+	public float bestTime;
 
 	GameObject startPanel;
 	Text startText;
@@ -25,6 +28,7 @@ public class GameManager : MonoBehaviour {
 	Transform startPoint;
 	Spawner spawner;
 	bool gameStarted;
+	Level currentLevel;
 
 	public static GameManager instance;
 
@@ -69,18 +73,25 @@ public class GameManager : MonoBehaviour {
 		startText = GameObject.Find ("Start Text").GetComponent<Text> ();
 		startText.text = "(Tap To Start)";
 		startPanel.SetActive (true);
-		scoreText = GameObject.Find ("Score").GetComponent<Text> ();
-		scoreText.text = "Score: 0";
-		highScoreText = GameObject.Find ("High Score").GetComponent<Text> ();
-		highScore = PlayerPrefs.GetFloat ("HighScore");
-		highScoreText.text = "High Score: " + (int)(highScore * 100);
 		finishPanel = GameObject.Find ("FinishPanel");
 		finishPanel.SetActive (false);
 		finishScoreText = finishPanel.transform.FindChild ("FinishScore").GetComponent<Text> ();
-		spawner = GameObject.Find ("Spawner").GetComponent<Spawner> ();
 		player = GameObject.FindGameObjectWithTag ("Player").transform;
-		startPoint = GameObject.FindGameObjectWithTag ("StartPoint").transform;
-		distance = Vector3.Distance (player.position, startPoint.position);
+
+		if (Application.loadedLevel == 1) {
+			scoreText = GameObject.Find ("Score").GetComponent<Text> ();
+			scoreText.text = "Score: 0";
+			highScoreText = GameObject.Find ("High Score").GetComponent<Text> ();
+			highScore = PlayerPrefs.GetFloat ("EndlessHighScore");
+			highScoreText.text = "High Score: " + (int)(highScore * 100);
+			spawner = GameObject.Find ("Spawner").GetComponent<Spawner> ();
+			startPoint = GameObject.FindGameObjectWithTag ("StartPoint").transform;
+			distance = Vector3.Distance (player.position, startPoint.position);
+		} else if (Application.loadedLevel >= 2) {
+			currentLevel = GameObject.Find ("Level").GetComponent<Level>();
+
+		}
+
 		Debug.Log ("Loaded");
 	}
 
@@ -98,6 +109,7 @@ public class GameManager : MonoBehaviour {
 				GetComponent<AudioSource>().Play ();
 			gameStarted = true;
 		}
+
 		GameObject[] p = GameObject.FindGameObjectsWithTag ("Player");
 		if (p.Length >= 2) {
 			Destroy (p [1]);
@@ -115,40 +127,61 @@ public class GameManager : MonoBehaviour {
 	void UpdateScore ()
 	{
 		Debug.Log ("Updating Score");
-//		if (player) {
-//			distance = Vector3.Distance (player.position, startPoint.position);
-//			Debug.Log ("Distance recalculated");
-//		}
-		score += Time.deltaTime;
+		if (Application.loadedLevel == 1) {
+//			if (player) {
+//				distance = Vector3.Distance (player.position, startPoint.position);
+//				Debug.Log ("Distance recalculated");
+//			}
+			score += Time.deltaTime;
+		} else if (Application.loadedLevel >= 2) {
+			time += Time.deltaTime;
+		}
 		UpdateText ();
 	}
 
 	void UpdateText ()
 	{
-		scoreText.text = "Score: " + (int)(score * 100);
-//		scoreText.text = "Score: " + (int)(distance * 100);
+		if (Application.loadedLevel == 1) {
+			scoreText.text = "Score: " + (int)(score * 100);
+//			scoreText.text = "Score: " + (int)(distance * 100);
+		}
 	}
 
 	public void GameOver()
 	{
-		if (score > highScore) {
-			highScore = score;
-			PlayerPrefs.SetFloat ("HighScore", highScore);
-			Analytics.CustomEvent ("NewHighScore", new Dictionary<string, object>{
+		if (Application.loadedLevel == 1) {
+			if (score > highScore) {
+				highScore = score;
+				PlayerPrefs.SetFloat ("EndlessHighScore", highScore);
+				Analytics.CustomEvent ("NewHighScore", new Dictionary<string, object>{
 				{ "highScore", highScore }
 			});
+			}
+			Analytics.CustomEvent ("GameOver", new Dictionary<string, object>
+			                       {
+				{ "lastColumn", spawner.previousColumn },
+				{ "score", ((int)score * 100)}
+			});
 		}
-
-		Analytics.CustomEvent ("GameOver", new Dictionary<string, object>
-		                       {
-			{ "lastColumn", spawner.previousColumn },
-			{ "score", ((int)score * 100)}
-		});
+		else if (Application.loadedLevel >= 2) {
+			bestTime = PlayerPrefs.GetFloat ("HighScore" + currentLevel.level.ToString ());
+			if(time > bestTime)
+			{
+				bestTime = time;
+				PlayerPrefs.SetFloat ("HighScore" + currentLevel.level.ToString (), bestTime);
+			}
+		}
 
 		gameOver = true;
 		finishPanel.SetActive (true);
-		finishScoreText.text = "Your Score: " + (int)(score * 100) +
-			"\n\nHigh Score: " + (int)(highScore * 100);
+		if (Application.loadedLevel == 1) {
+			finishScoreText.text = "Your Score: " + (int)(score * 100) +
+				"\n\nHigh Score: " + (int)(highScore * 100);
+		} else if (Application.loadedLevel >= 2) {
+			finishScoreText.text = String.Format ("Your Time: {0}\n\nBest Time: {1}",
+			                                      Math.Round (time, 2),
+			                                      Math.Round (bestTime, 2));
+		}
 		Time.timeScale = 0.0f;
 		Time.fixedDeltaTime = 0.0f;
 	}

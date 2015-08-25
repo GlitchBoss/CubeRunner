@@ -25,7 +25,7 @@ public class Player : MonoBehaviour {
 
 	void Update()
 	{
-		if ((Input.touches.Length > 0 || Input.GetButton ("Jump")) && grounded) {
+		if ((Input.touches.Length > 0 || Input.GetButtonDown ("Jump")) && grounded) {
 			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0.0f, jumpForce), ForceMode2D.Impulse);
 			grounded = false;
 			SoundManager.instance.PlaySFX (jump);
