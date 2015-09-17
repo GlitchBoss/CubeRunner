@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour {
 	GameObject finishPanel;
 	public Transform player;
 //	float distance;
-	Transform startPoint;
+//	Transform startPoint;
 	Spawner spawner;
 	bool gameStarted;
 	public Level currentLevel;
@@ -91,7 +91,7 @@ public class GameManager : MonoBehaviour {
 			highScore = PlayerPrefs.GetFloat ("EndlessHighScore");
 			highScoreText.text = "High Score: " + (int)(highScore * 100);
 			spawner = GameObject.Find ("Spawner").GetComponent<Spawner> ();
-			startPoint = GameObject.FindGameObjectWithTag ("StartPoint").transform;
+//			startPoint = GameObject.FindGameObjectWithTag ("StartPoint").transform;
 //			distance = Vector3.Distance (player.position, startPoint.position);
 		} else if (Application.loadedLevel >= 2) {
 			currentLevel = GameObject.Find ("Level").GetComponent<Level>();
@@ -141,7 +141,7 @@ public class GameManager : MonoBehaviour {
 
 	void UpdateScore ()
 	{
-		Debug.Log ("Updating Score");
+//		Debug.Log ("Updating Score");
 		if (Application.loadedLevel == 2) {
 //			if (player) {
 //				distance = Vector3.Distance (player.position, startPoint.position);
@@ -179,7 +179,8 @@ public class GameManager : MonoBehaviour {
 			});
 		}
 		else if (Application.loadedLevel >= 3) {
-			bestTime = PlayerPrefs.GetFloat ("HighScore" + currentLevel.level.ToString ());
+			bestTime = PlayerPrefs.GetFloat ("HighScore" + currentLevel.level.ToString (),
+			                                 currentLevel.defaultBestTime);
 			if(time < bestTime)
 			{
 				bestTime = time;
